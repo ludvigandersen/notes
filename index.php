@@ -7,8 +7,25 @@
   <title>Document</title>
 </head>
 <body>
-  <?php include_once 'header.php' ?>
+  <?php
+    session_start();
+    if (isset($_POST['email']) && $_POST['email'] != "") {
+      require_once('src/user.php');
+  
+      $user = new User();
+      $verified = $user->sign_in($_POST['email'], $_POST['password']); 
+      if ($verified){
+        header('Location: artist.php');
+      }   
+    } else if (isset($_POST['signOut'])) {
+      session_destroy();
+    }
 
-  <?php include_once 'footer.html' ?>
+    if(!isset($_SESSION['email'])){
+      include_once('signin.php');
+    } else {
+      header('Location: artist.php');
+    }
+  ?>
 </body>
 </html>
