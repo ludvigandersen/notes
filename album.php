@@ -7,7 +7,14 @@
   <title>Document</title>
 </head>
 <body>
-  <?php include_once('header.php') ?>
+  <?php 
+    session_start();
+    
+    if (!$_SESSION['email']){
+      header('Location: index.php');
+    }
+    include_once('header.php') 
+  ?>
     <h1>velkommen til Albums</h1>
   <?php include_once('footer.html') ?>
 </body>
