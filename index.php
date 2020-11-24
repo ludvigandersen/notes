@@ -22,7 +22,7 @@
     }
 
     if(!isset($_SESSION['email'])){
-      include_once('signin.php');
+      header('Location: signin.php');
     } else {
       header('Location: artist.php');
     }
