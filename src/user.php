@@ -2,6 +2,39 @@
   require_once('db_conn.php');  
   
   class User {
+    
+    # Inset user into database
+    function create($data){
+      global $pdo;
+
+      if ($data['password'] != $data['passwordRepeat']){
+        echo json_encode("passwords are not matching");
+        return;
+      }
+
+$query = <<<'SQL'
+      INSERT INTO customer
+      (FirstName, LastName, Password, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL;
+
+      $pass_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+      $stmt = $pdo->prepare($query);
+      $insert_data = array(
+        $data['firstName'], $data['lastName'], $pass_hash,
+        $data['company'], $data['address'], $data['city'],
+        $data['state'], $data['country'], $data['postalCode'],
+        $data['phoneNumber'], $data['fax'], $data['email']
+      );
+      $result = $stmt->execute($insert_data);
+
+      # Check if query was successful
+      if($result){
+        echo true;
+      } else {
+        echo false;
+      }
+    }
 
     # Validate user based on $email and $password
     function sign_in($email, $password){
