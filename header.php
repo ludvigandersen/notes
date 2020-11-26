@@ -1,11 +1,12 @@
 <header>
   <img src="img/music-notes-logo.jpg" alt="" id="logo">
   <?php 
+
     if(!isset($_SESSION)) { 
       session_start(); 
     }
-
-    if (isset($_SESSION['email'])){
+    print_r($_SESSION);
+    if (isset($_SESSION['admin'])){
   ?>
   <a href="artist.php">Artists</a>
   <a href="album.php">Albums</a>
@@ -15,7 +16,7 @@
     <input type="submit" name="signOut" value="Sign out">
   </form>
   <?php } else { ?>
-    <a href="index.php">Sign In</a>
-    <a href="index.php">Sign Up</a>
+    <a href="signin.php">Sign In</a>
+    <a href="signup.php">Sign Up</a>
   <?php } ?>
 </header>
