@@ -67,15 +67,15 @@ SQL;
         $stmt->execute(array($pass_hash));
         $admin = $stmt->fetch();
 
-        $_SESSION['email'] = $_POST['email'];
+        // $_SESSION['email'] = $_POST['email'];
         if(password_verify($password, $admin[0])) {
-          $_SESSION['admin'] = "true";
+          $admin = "true";
         } else {
-          $_SESSION['admin'] = "false";
+          $admin = "false";
         }
-        
+        return [password_verify($password, $user['password']), $admin];  
       }
-      return password_verify($password, $user['password']);
+      return [password_verify($password, $user['password'])];
     }
   }
 ?>
