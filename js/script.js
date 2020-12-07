@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  
+
   // Sign up as a new user
   $("#signUpForm").on("submit", function(e){
     e.preventDefault();
@@ -8,10 +8,10 @@ $(document).ready(function(){
     passwordRepeat = $("#passwordRepeat").val();
 
     // Validating matching passwords
-    // if(password != passwordRepeat){
-    //   alert("Passwords are not matching!");
-    //   return;
-    // }
+    if(password != passwordRepeat){
+      alert("Passwords are not matching!");
+      return;
+    }
 
     // Prepare data to be sent in POST request to api
     data = {
@@ -33,15 +33,18 @@ $(document).ready(function(){
     }
 
     $.ajax({
-      url: "src/api.php",
+      url: "http://notes-api.com/v1/user",
       type: "POST",
       data: data,
       success: function(data){
         if(data){
           window.location.replace('../index.php');
         } else {
-          alert("User creation failed");4
+          alert("User creation failed");
         }
+      },
+      failure: function(e){
+        console.log(e)
       }
     })
   })
