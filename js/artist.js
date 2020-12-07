@@ -1,43 +1,27 @@
 $(document).ready(function(e){
 
-  // Listing all artists
-  $.ajax({
-    url: "src/rest_api.php/artist",
-    type: "GET",
-    dataType: "json",
-    success: function(data){
+  listArtists(0)
 
-      data.forEach(element => {
-        let tableElement = $('<td>', {
-          text: element[1]
-        })
-        
-        // If the current user is an admin, show the CRUD operations
-        // Else just list the Artists
-        // TODO: Refactor so the appending only happens once.
-        if ($('#artistsAdmin').length){
-          var tableBtns = $('<td>', {
-            class: "tableBtns"
-          }).append($("<input>", {
-            type: "image", src: "../img/information-icon.jpg", id: element[0]
-          })).append($("<input>", {
-            type: "image", src: "../img/settings-icon.png", id: element[0], class: "update"
-          })).append($("<input>", {
-            type: "image", src: "../img/delete-icon.png", id: element[0], class: "delete"
-          }))
-        
-          $("#artistsAdmin").find('tbody')
-          .append($('<tr>', {id: element[0]})
-          .append(tableElement).append(tableBtns))
-        } else {
-          $("#artists").find('tbody')
-          .append($('<tr>', {id: element[0]})
-          .append(tableElement))
-        }        
-      });
-    },
-    error: function(e){
-      console.log(e)
+  // Navigating artist table
+  $("#btnForward").on("click", function(e){
+    p = $(this).attr('page')
+    listArtists(p)
+    count = ++ p
+    $(this).attr('page', count)
+    $("#btnBackward").attr('page', count - 2)
+    $("#btnBackward").attr('disabled', false)
+  })
+
+  $("#btnBackward").on("click", function(e){
+    p = $(this).attr('page')
+    listArtists(p)
+    count = -- p
+    $(this).attr('page', count)
+    count = ++ p
+    count = ++ p
+    $("#btnForward").attr('page', count)
+    if($(this).attr('page') == -1){
+      $(this).attr('disabled', true)
     }
   })
 
@@ -51,13 +35,13 @@ $(document).ready(function(e){
     e.preventDefault();
     let name = $("#name").val()
 
-    if (name === "") {
+    if ($.trim(name) == "") {
       alert("Name is missing")
       return;
     }
 
     $.ajax({
-      url: "src/rest_api.php/artist",
+      url: "http://notes-api.com/v1/artist",
       type: "POST",
       data: {
         "name": name
@@ -88,10 +72,10 @@ $(document).ready(function(e){
 
     if (confirm("Are you sure you want to delete?")){
       $.ajax({
-        url: `src/rest_api.php/artist/${id}`,
-        type: "DELETE",
+        url: `http://notes-api.com/v1/artist/${id}`,
+        type: 'DELETE',
         success: function(data){
-
+          console.log(data)
           if(data == "1") {
             window.location.reload()
           } else if(data == "artist has an album") {
@@ -123,12 +107,19 @@ $(document).ready(function(e){
 
   $("#finishUpdate").on("click", function(e){
     e.preventDefault();
+    name = $("#nameUpdate").val()
+    if($.trim(name) == ""){
+      alert("Please provide a name")
+      return
+    }
 
     // Refactor how data is sent, only a single string atm.
     $.ajax({
-      url: `src/rest_api.php/artist/${$("#artistId").val()}`,
-      type: "PUT",
-      data: $("#nameUpdate").val(),
+      url: `http://notes-api.com/v1/artist/${$("#artistId").val()}`,
+      type: "POST",
+      data: {
+        "name": name
+      },
       success: function(data){
         if(data === "artist update success"){
           alert("Update successful")
@@ -148,3 +139,56 @@ $(document).ready(function(e){
     modal.css("display", "none")
   })
 })
+
+function listArtists(p){
+  if($("#artistsAdmin").length){
+    $("#artistsAdmin").find('tr:gt(0)').remove()
+  } else {
+    $("#artists").find('tr:gt(0)').remove()
+  }
+
+  $.ajax({
+    url: `http://notes-api.com/v1/artist?p=${p}`,
+    type: "GET",
+    dataType: "json",
+    success: function(data){
+      if(data.length < 25){
+        $("#btnForward").attr("disabled", true)
+      } else {
+        $("#btnForward").attr("disabled", false)
+      }
+
+      data.forEach(element => {
+        let tableElement = $('<td>', {
+          text: element['Name']
+        })
+        
+        // If the current user is an admin, show the CRUD operations
+        // Else just list the Artists
+        // TODO: Refactor so the appending only happens once.
+        if ($('#artistsAdmin').length){
+          var tableBtns = $('<td>', {
+            class: "tableBtns"
+          }).append($("<input>", {
+            type: "image", src: "../img/information-icon.jpg", id: element['ArtistId']
+          })).append($("<input>", {
+            type: "image", src: "../img/settings-icon.png", id: element['ArtistId'], class: "update"
+          })).append($("<input>", {
+            type: "image", src: "../img/delete-icon.png", id: element['ArtistId'], class: "delete"
+          }))
+        
+          $("#artistsAdmin").find('tbody')
+          .append($('<tr>', {id: element['ArtistId']})
+          .append(tableElement).append(tableBtns))
+        } else {
+          $("#artists").find('tbody')
+          .append($('<tr>', {id: element['ArtistId']})
+          .append(tableElement))
+        }        
+      });
+    },
+    error: function(e){
+      console.log(e)
+    }
+  })
+}
