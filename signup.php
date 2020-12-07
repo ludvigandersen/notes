@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="script-src http://notes.com/js/; img-src http://notes.com/; style-src http://notes.com/css/;">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/jquery-3.5.1.js"></script>
   <script src="js/script.js"></script>
@@ -10,6 +11,7 @@
 </head>
 <body>
   <?php include_once('header.php') ?>
+  <div class="userDiv">
   <form action="signup.php" id="signUpForm" method="POST">
     <fieldset>
       <legend>Sign up</legend>
@@ -29,7 +31,7 @@
       <input type="submit" value="Sign Up">
     </fieldset>
   </form>
-
+  </div>
   <?php include_once('footer.html') ?>
 </body>
 </html>
